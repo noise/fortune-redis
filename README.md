@@ -1,4 +1,6 @@
+# Overview
 
+This is a simple project to aid myself in learning some more python. It consists of a basic REST API for accessing fortunes (http://en.wikipedia.org/wiki/Fortune_(Unix)) that have been parsed from the original files and stored in Redis sets.
 
 # Dependencies
 
@@ -29,7 +31,10 @@ The following redis key patterns are used:
 - fmods : set of fortune-mod names
 - u/{id}/{module}/seen : Set of seen fortune ids for a given user ID and module
 
-for non-repeating random selection we do the following:
+# Selection algorithm
+
+For per-user non-repeating random selection we do the following:
+
 ```sh
 # choose a random fortune-mod set
 mod = srandmember fmods 
@@ -43,8 +48,18 @@ if (scard u{id}/tmp == 0):
 else"
     fid = srandmember u/{id}/tmp
 sadd u/{id}/{mod}/seen fid
-f = f/{id}
+f = get f/{id}
 # cleanup
 del u{id}/tmp
 
 
+# TODO
+
+- per-user logic
+- add users to a list
+- keep per-user stats - counts per set, etc.
+- short fortune option
+- content-types - json, html, raw
+- Jquery frontend
+- deploy to abitrandom.net/fortune/
+- user-generated content? ratings thereof?

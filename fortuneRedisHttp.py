@@ -3,12 +3,15 @@
 Simple HTTP API for random fortunes
 '''
 from flask import Flask
+from flask import request
 from fortuneRedis import FortuneRedis
 
 app = Flask(__name__)
 
 @app.route('/')
 def randomFortune():
+    id = request.args['id'] or request.remote_addr
+    print 'id = %s' % id
     return fr.randomFortune()
 
 @app.route('/mod/<module>')
