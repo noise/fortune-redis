@@ -51,7 +51,7 @@ sadd u/{id}/{mod}/seen fid
 f = get f/{id}
 # cleanup
 del u{id}/tmp
-
+```
 
 # TODO
 
