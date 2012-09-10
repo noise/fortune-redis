@@ -25,9 +25,9 @@ brew install redis
 
 The following redis key patterns are used:
 
-- fidgen : fortune id counter
+- fid : fortune id counter
 - f/{id} : a single fortune keyed by ID
-- fmod/{module} : Set of fortune ids for the named fortune-mod, e.g. f/bofh-excuses
+- fmod/{module} : Set of fortune ids for the named fortune-mod data set, e.g. f/bofh-excuses
 - fmods : set of fortune-mod names
 - u/{id}/{module}/seen : Set of seen fortune ids for a given user ID and module
 
