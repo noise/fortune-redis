@@ -110,17 +110,54 @@ class Fortunes(object):
         '''
         Select a random fortune ID from the given module and return it.
         :param mod: name of fortune module to select from
+        :return: id of selected fortune
         '''
         return self.r.srandmember(self.mod_key(mod))
 
-    def random_fortune(self, mod=None):
+    def random_fortune_id_user(self, mod, uid=None):
+        '''
+        Select a random fortune ID from the given module that the user
+        has not yet seen and return it. Ensures that a user sees all
+        fortunes in the given module before repeating.
+        :param mod: name of fortune module from which to select
+        :param uid: user id for tracking seen fortunes
+        :return: id of selected fortune
+        '''
+        if uid:
+            user_seen = 'u/%s/%s/seen' % (uid, mod)
+            user_unseen = 'u/%s/tmp' % uid
+            # get unseen subset
+            self.r.sdiffstore(user_unseen, self.mod_key(mod), user_seen)
+            if self.r.scard(user_unseen) == 0:
+                # seen them all, reset
+                #print 'seen all from %s for uid %s' % (mod, uid)
+                self.r.delete(user_seen)
+                fid = self.r.srandmember(self.mod_key(mod))
+            else:
+                fid = self.r.srandmember(user_unseen)
+        else:
+            fid = self.r.srandmember(self.mod_key(mod))
+
+        # mark seen and cleanup
+        self.r.sadd(user_seen, fid)
+        self.r.delete(user_unseen)
+        return fid
+
+    def random_fortune(self, mod=None, uid=None):
         '''
         Select a random Fortune from the given module and return it.
         :param mod: name of fortune module, chosen randomly if omitted
+        :param uid: optional user id to perform per-user
+                    non-repeating selection
+        :return: selected Fortune object
         '''
-        if (mod is None):
+        if not mod:
             mod = self.r.srandmember(self.MODS_KEY)
-        fid = self.random_fortune_id(mod)
+        if not uid:
+            fid = self.random_fortune_id(mod)
+        else:
+            print 'selecting for %s' % uid
+            fid = self.random_fortune_id_user(mod, uid)
         text = self.r.get(self.fortune_key(fid))
         return Fortune(fid, mod, text)
 
@@ -137,9 +174,13 @@ if __name__ == '__main__':
 
     fr = Fortunes(options.host)
 
-    for filename in os.listdir(options.path):
-        if not ('.u8' in filename or '.dat' in filename or '.md' in filename):
-            fr.load_to_redis(options.path + '/' + filename, filename)
+    if os.path.isfile(options.path):
+        fr.load_to_redis(options.path, os.path.basename(options.path))
+    else:
+        for filename in os.listdir(options.path):
+            if not ('.u8' in filename or '.dat' in filename or
+                    '.md' in filename):
+                fr.load_to_redis(options.path + '/' + filename, filename)
 
     #print 'testing...'
     #print fr.random_fortune()

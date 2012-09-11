@@ -30,4 +30,4 @@ def randomFortuneMod(module):
 if __name__ == '__main__':
     app.debug = True
     f = Fortunes()
-    app.run()
+    app.run(host='0.0.0.0')
