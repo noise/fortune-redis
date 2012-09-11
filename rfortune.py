@@ -49,7 +49,7 @@ class Fortunes(object):
         self.host = host or 'localhost'
         self.r = redis.Redis(self.host)
 
-    def parse(path):
+    def parse(self, path):
         '''
         Parses the given fortune data file and return contained fortunes as
         a list of strings.
@@ -67,6 +67,7 @@ class Fortunes(object):
                 else:
                     fortunes.append(entry)
                     entry = ""
+            fortunes.append(entry)  # final entry
             return fortunes
         finally:
             if f:
@@ -125,6 +126,7 @@ class Fortunes(object):
 
 
 if __name__ == '__main__':
+    ''' cmdline usage for performing the initial data load to redis '''
     usage = "usage: %prog [option] pattern"
     parser = OptionParser(usage=usage)
     parser.add_option("--host", dest="host", default="localhost",
@@ -136,7 +138,7 @@ if __name__ == '__main__':
     fr = Fortunes(options.host)
 
     for filename in os.listdir(options.path):
-        if not ('.u8' in filename or '.dat' in filename):
+        if not ('.u8' in filename or '.dat' in filename or '.md' in filename):
             fr.load_to_redis(options.path + '/' + filename, filename)
 
     #print 'testing...'
