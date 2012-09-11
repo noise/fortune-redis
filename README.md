@@ -41,9 +41,9 @@ mod = srandmember fmods
 # eliminate seen ids
 sdiffstore u/{id}/tmp fmod/{mod} u/{id}/{mod}/seen
 # random from remaining
-if (scard u{id}/tmp == 0):
+if (scard u/{id}/tmp == 0):
     # seen them all, reset
-    del u/{id}/{module}/seen
+    del u/{id}/{mod}/seen
     fid = srandmember fmod/{mod}
 else"
     fid = srandmember u/{id}/tmp
@@ -55,7 +55,6 @@ del u{id}/tmp
 
 # TODO
 
-- per-user logic
 - add users to a list
 - keep per-user stats - counts per set, etc.
 - short fortune option

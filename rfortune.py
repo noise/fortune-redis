@@ -106,6 +106,12 @@ class Fortunes(object):
         self.r.sadd(self.MODS_KEY, mod)
         print 'loaded %d fortunes from %s' % (self.r.scard(modkey), path)
 
+    def module_list(self):
+        '''
+        :return: a list of all available fortune modules
+        '''
+        return self.r.smembers(self.MODS_KEY)
+
     def random_fortune_id(self, mod):
         '''
         Select a random fortune ID from the given module and return it.
@@ -161,6 +167,8 @@ class Fortunes(object):
         text = self.r.get(self.fortune_key(fid))
         return Fortune(fid, mod, text)
 
+    def user_stats(self, uid):
+        return 'stub'
 
 if __name__ == '__main__':
     ''' cmdline usage for performing the initial data load to redis '''
