@@ -162,7 +162,7 @@ class Fortunes(object):
         if not uid:
             fid = self.random_fortune_id(mod)
         else:
-            print 'selecting for %s' % uid
+            #print 'selecting for %s' % uid
             fid = self.random_fortune_id_user(mod, uid)
         text = self.r.get(self.fortune_key(fid))
         return Fortune(fid, mod, text)
@@ -174,23 +174,28 @@ if __name__ == '__main__':
     ''' cmdline usage for performing the initial data load to redis '''
     usage = "usage: %prog [option] pattern"
     parser = OptionParser(usage=usage)
+    parser.add_option("--load", dest="load", default=False,
+                      help="switch to enable data loading")
     parser.add_option("--host", dest="host", default="localhost",
                       help="redis host")
     parser.add_option("--path", dest="path", default="fortunes",
                       help="path to directory of fortune-mod files")
+    parser.add_option("-v", dest="verbose", default=False, action="store_true",
+                      help="verbose fortune output")
+    parser.add_option("--module", dest="module", default=None,
+                      help="select from the given module")
     (options, args) = parser.parse_args()
 
     fr = Fortunes(options.host)
 
-    if os.path.isfile(options.path):
-        fr.load_to_redis(options.path, os.path.basename(options.path))
+    if options.load:
+        if os.path.isfile(options.path):
+            fr.load_to_redis(options.path, os.path.basename(options.path))
+        else:
+            for filename in os.listdir(options.path):
+                if not ('.u8' in filename or '.dat' in filename or
+                        '.md' in filename):
+                    fr.load_to_redis(options.path + '/' + filename, filename)
     else:
-        for filename in os.listdir(options.path):
-            if not ('.u8' in filename or '.dat' in filename or
-                    '.md' in filename):
-                fr.load_to_redis(options.path + '/' + filename, filename)
-
-    #print 'testing...'
-    #print fr.random_fortune()
-    #print fr.random_fortune('foo')
-    #print fr.random_fortune('bofh-excuses')
+        f = fr.random_fortune(options.module)
+        print f if options.verbose else f.text

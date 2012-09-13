@@ -20,6 +20,37 @@ sudo pip install flask
 brew install redis
 ```
 
+# Running
+
+## Load data
+
+Assuming Redis is running on localhost:
+
+```sh
+./rfortune.py --load
+```
+
+for more options:
+```sh
+./rfortune.py -h 
+```
+
+## Start the server
+
+```sh
+./fortune_server.py
+```
+and go to http://http://0.0.0.0:5000
+
+http://0.0.0.0:5000/help yields the full set of Resources.
+
+## commandline fortunes
+
+```sh
+./rfortune.py
+./rfortune.py -v
+./rfortune.py -v --module bofh-excuses
+```
 
 # Storage Design
 
@@ -60,5 +91,4 @@ del u{id}/tmp
 - short fortune option
 - content-types - json, html, raw
 - Jquery frontend
-- deploy to abitrandom.net/fortune/
 - user-generated content? ratings thereof?
