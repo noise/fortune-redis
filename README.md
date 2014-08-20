@@ -4,21 +4,26 @@ This is a simple project to aid myself in learning some more python. It consists
 
 # Dependencies
 
-This project uses Python 2.7.x, Flask, and Redis.
+This project uses Python 2.7.x, Flask, and Redis. Additionally pylint, nose, and coverage are used for testing.
 
 Linux:
 
 ```sh
 sudo apt-get install redis-server
-sudo pip install flask 
+
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 OS X:
 
 ```sh
-sudo pip install flask 
 brew install redis
-```
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+ ```
 
 # Running
 
@@ -27,7 +32,7 @@ brew install redis
 Assuming Redis is running on localhost:
 
 ```sh
-./rfortune.py --load
+./rfortune.py --load fortunes
 ```
 
 for more options:
@@ -40,7 +45,7 @@ for more options:
 ```sh
 ./fortune_server.py
 ```
-and go to http://http://0.0.0.0:5000
+and visit http://http://0.0.0.0:5000
 
 http://0.0.0.0:5000/help yields the full set of Resources.
 

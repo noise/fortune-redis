@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 '''
 Simple HTTP API for random fortunes
 '''
